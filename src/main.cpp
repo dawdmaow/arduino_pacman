@@ -1,18 +1,23 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+constexpr byte CLK = 13;
+constexpr byte DIN = 11;
+constexpr byte CS = 10;
+constexpr byte LED_PIN = 13;
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Hello World!");
+  pinMode(CLK, OUTPUT);
+  pinMode(DIN, OUTPUT);
+  pinMode(CS, OUTPUT);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop()
+{
+  digitalWrite(LED_PIN, HIGH);
+  delay(500);
+  digitalWrite(LED_PIN, LOW);
+  delay(500);
 }
