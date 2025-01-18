@@ -1,16 +1,24 @@
+#pragma once
 #include <Arduino.h>
+
+constexpr byte LED_PIN = 13;
 
 void assertImpl(bool cond, int line)
 {
     if (!cond)
     {
-        Serial.println("Error");
+        Serial.println("ERROR LINE:");
         Serial.println(line);
         while (true)
         {
-            __asm__ __volatile__("nop");
+            digitalWrite(LED_PIN, HIGH);
+            delay(250);
+            digitalWrite(LED_PIN, LOW);
+            delay(250);
         }
     }
 }
 
 #define assert(cond) assertImpl(cond, __LINE__)
+
+#define echo(x) Serial.println(x);
