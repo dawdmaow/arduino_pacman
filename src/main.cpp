@@ -4,6 +4,7 @@
 #include <Adafruit_ILI9341.h>
 #include "game.h"
 #include "utils.h"
+#include <Adafruit_FT6206.h>
 
 constexpr byte CLK = 13;
 constexpr byte DIN = 11;
@@ -11,6 +12,7 @@ constexpr byte CS = 10;
 constexpr byte DC = 9;
 
 auto render = Adafruit_ILI9341(CS, DC);
+auto touch = Adafruit_FT6206();
 
 constexpr uint16_t distance = 8;
 
@@ -29,6 +31,13 @@ int16_t toRenderCoord(byte x)
 //   yield();
 // }
 
+void circle(byte x, byte y, uint16_t color, uint16_t factor)
+{
+  auto r = distance / factor;
+  render.fillCircle(toRenderCoord(x) + distance / 2 - r, toRenderCoord(y) + distance / 2 - r, r, color);
+  // yield();
+}
+
 void renderFg()
 {
   for (byte x = 0; x < width; ++x)
@@ -41,10 +50,27 @@ void renderFg()
       switch (entity)
       {
       case PLAYER:
-        render.fillCircle(renderX, renderY, distance / 2, ILI9341_YELLOW);
+        // render.fillCircle(renderX, renderY, distance / 2, ILI9341_YELLOW);
+        circle(x, y, ILI9341_YELLOW, 3);
         break;
       case GHOST:
-        render.fillCircle(renderX, renderY, distance / 2, ILI9341_RED);
+        // render.fillCircle(renderX, renderY, distance / 2, ILI9341_RED);
+        circle(x, y, ILI9341_RED, 3);
+        break;
+      case COIN:
+        // r = distance / 5;
+        // render.fillCircle(renderX + distance / 2 - r, renderY + distance / 2 - r, r, ILI9341_YELLOW);
+        // break;
+        circle(x, y, ILI9341_GREEN, 5);
+        break;
+      case SUPER_COIN:
+        // r = distance / 3;
+        // render.fillCircle(renderX + distance / 2, renderY + distance / 2, r, ILI9341_PINK);
+        // break;
+        circle(x, y, ILI9341_GREEN, 3);
+        break;
+      case EMPTY:
+        render.fillRect(renderX, renderY, distance, distance, ILI9341_BLACK);
         break;
       }
       yield();
@@ -69,17 +95,21 @@ void renderBg()
       case WALL:
         render.fillRect(renderX, renderY, w - 2, h - 2, ILI9341_BLUE);
         break;
-      case COIN:
-        r = distance / 5;
-        render.fillCircle(renderX + distance / 2, renderY + distance / 2, r, ILI9341_YELLOW);
-        break;
-      case SUPER_COIN:
-        r = distance / 3;
-        render.fillCircle(renderX + distance / 2, renderY + distance / 2, r, ILI9341_PINK);
-        break;
-      case EMPTY:
-        render.fillRect(renderX, renderY, w, h, ILI9341_BLACK);
-        break;
+        // case COIN:
+        //   // r = distance / 5;
+        //   // render.fillCircle(renderX + distance / 2 - r, renderY + distance / 2 - r, r, ILI9341_YELLOW);
+        //   // break;
+        //   circle(x, y, ILI9341_GREEN, 5);
+        //   break;
+        // case SUPER_COIN:
+        //   // r = distance / 3;
+        //   // render.fillCircle(renderX + distance / 2, renderY + distance / 2, r, ILI9341_PINK);
+        //   // break;
+        //   circle(x, y, ILI9341_GREEN, 3);
+        //   break;
+        // case EMPTY:
+        //   render.fillRect(renderX, renderY, w, h, ILI9341_BLACK);
+        //   break;
       }
       yield();
     }
@@ -94,6 +124,11 @@ void setup()
   pinMode(DIN, OUTPUT);
   pinMode(CS, OUTPUT);
   resetGame();
+
+  if (!touch.begin(40))
+  {
+    assert(false);
+  }
 
   render.begin();
 
@@ -113,7 +148,57 @@ void setup()
   renderBg();
 }
 
+constexpr uint16_t displayWidth = 240;
+constexpr uint16_t displayHeight = 320;
+
 void loop()
 {
+  if (touch.touched())
+  {
+    auto p = touch.getPoint();
+    auto factor = 3;
+
+    auto h0 = displayHeight / factor;
+    auto h1 = displayHeight - h0;
+    auto w0 = displayWidth / factor;
+    auto w1 = displayWidth - w0;
+
+    // echo("::::::");
+    // echo(p.x);
+    // echo(p.y);
+    // echo("::::::");
+
+    if (p.y < h0)
+    {
+      nextDirection = DOWN;
+      // echo("-> DOWN");
+    }
+    else if (p.y > h1)
+    {
+      nextDirection = UP;
+      // echo("-> UP");
+    }
+    else if (p.x < w0)
+    {
+      nextDirection = RIGHT;
+      // echo("-> RIGHT");
+    }
+    else if (p.x > w1)
+    {
+      nextDirection = LEFT;
+      // echo("-> LEFT");
+    }
+    else
+    {
+      // echo("DIDNT CHANGE DIRECTION");
+    }
+
+    // echo("NEW DIRECTION:");
+    // echo(direction.x);
+    // echo(direction.y);
+  }
+
+  movePlayer();
   renderFg();
+  // delay(100);
 }

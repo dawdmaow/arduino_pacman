@@ -25,7 +25,9 @@
     [ "uno:10", "lcd1:CS", "magenta", [ "h19.2", "v154.3", "h-393.6" ] ],
     [ "uno:9", "lcd1:D/C", "limegreen", [ "h28.8", "v154.4", "h-384" ] ],
     [ "uno:11", "lcd1:MOSI", "cyan", [ "h38.4", "v183", "h-384" ] ],
-    [ "uno:13", "lcd1:SCK", "yellow", [ "h48", "v211.6", "h-384" ] ]
+    [ "uno:13", "lcd1:SCK", "yellow", [ "h48", "v211.6", "h-384" ] ],
+    [ "uno:A5", "lcd1:SCL", "green", [ "h0" ] ],
+    [ "uno:A4", "lcd1:SDA", "yellow", [ "h0" ] ]
   ],
   "dependencies": {}
 }

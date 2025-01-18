@@ -195,6 +195,7 @@ Vec playerPos;
 Grid collectedCoins;
 Ghost ghosts[4];
 Vec direction;
+Vec nextDirection;
 
 void resetGame()
 {
@@ -207,6 +208,7 @@ void resetGame()
     ghosts[2] = {{14, 13}, false};
     ghosts[3] = {{14, 14}, false};
     direction = LEFT;
+    nextDirection = LEFT;
 }
 
 Entity getEntity(Vec pos)
@@ -285,6 +287,21 @@ void makeGhostsVulnerable()
 
 bool movePlayer()
 {
+    {
+        if ((nextDirection == LEFT && direction == RIGHT) || (nextDirection == RIGHT && direction == LEFT) || (nextDirection == UP && direction == DOWN) || (nextDirection == DOWN && direction == UP))
+        {
+            nextDirection = direction;
+        }
+        else
+        {
+            auto newPos = playerPos + nextDirection;
+            if (isValidPos(newPos) && getEntity(newPos) != WALL)
+            {
+                direction = nextDirection;
+            }
+        }
+    }
+
     auto newPos = playerPos + direction;
     if (!isValidPos(newPos))
     {
