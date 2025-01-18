@@ -60,6 +60,11 @@ struct Vec
         return {x + other.x, y + other.y};
     }
 
+    Vec operator-(Vec other)
+    {
+        return {x - other.x, y - other.y};
+    }
+
     bool operator==(Vec other)
     {
         return x == other.x && y == other.y;
@@ -204,10 +209,10 @@ void resetGame()
     lives = 3;
     playerPos = {14, 23};
     collectedCoins = Grid();
-    ghosts[0] = {{14, 11}, LEFT, false};
-    ghosts[1] = {{14, 12}, LEFT, false};
-    ghosts[2] = {{14, 13}, LEFT, false};
-    ghosts[3] = {{14, 14}, LEFT, false};
+    ghosts[0] = {{10, 11}, LEFT, false};
+    ghosts[1] = {{12, 11}, LEFT, false};
+    ghosts[2] = {{14, 11}, RIGHT, false};
+    ghosts[3] = {{16, 11}, RIGHT, false};
     direction = LEFT;
     nextDirection = LEFT;
 }
@@ -267,11 +272,15 @@ bool isGameOver()
 
 void playerDeath()
 {
-    lives--;
-    if (lives > 0)
-    {
-        resetPositions();
-    }
+    delay(1000);
+    resetGame();
+    // lives--;
+    // lives = 0;
+    // if (lives <= 0)
+    // {
+    //     // resetPositions();
+    //     resetGame();
+    // }
     // else
     // {
     //     gameOver();
@@ -309,7 +318,7 @@ bool movePlayer()
         return false;
     }
     auto entity = getEntity(newPos);
-    if (entity == WALL)
+    if (entity == WALL || getEntity(newPos) == GATE)
     {
         return false;
     }
@@ -370,7 +379,7 @@ bool moveGhost(Ghost &ghost, Vec dir)
     {
         return false;
     }
-    if (getEntity(newPos) == WALL)
+    if (getEntity(newPos) == WALL || getEntity(newPos) == GATE)
     {
         return false;
     }
@@ -387,19 +396,33 @@ void makeGhostsMove()
         auto ghost = &ghosts[ghostI];
         Vec dirs[4] = {LEFT, RIGHT, UP, DOWN};
 
-        for (int i = 3; i > 0; i--)
+        // CHASE PLAYER:
         {
-            auto j = random(0, i + 1);
-            auto temp = dirs[i];
-            dirs[i] = dirs[j];
-            dirs[j] = temp;
+            Vec playerDir = playerPos - ghost->pos;
+            Vec absPlayerDir = {abs(playerDir.x), abs(playerDir.y)};
+            Vec dir = absPlayerDir.x > absPlayerDir.y ? (playerDir.x > 0 ? RIGHT : LEFT) : (playerDir.y > 0 ? DOWN : UP);
+            if (moveGhost(*ghost, dir))
+            {
+                continue;
+            }
         }
 
-        for (int i = 0; i < 4; i++)
+        // RANDOM MOVEMENT:
         {
-            if (moveGhost(*ghost, dirs[i]))
+            for (int i = 3; i > 0; i--)
             {
-                break;
+                auto j = random(0, i + 1);
+                auto temp = dirs[i];
+                dirs[i] = dirs[j];
+                dirs[j] = temp;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (moveGhost(*ghost, dirs[i]))
+                {
+                    break;
+                }
             }
         }
     }
@@ -408,4 +431,13 @@ void makeGhostsMove()
 void tick()
 {
     makeGhostsMove();
+    for (byte i = 0; i < 4; ++i)
+    {
+        if (ghosts[i].pos == playerPos)
+        {
+            echo("DEATH");
+            playerDeath();
+            break;
+        }
+    }
 }
