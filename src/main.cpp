@@ -40,6 +40,19 @@ void circle(byte x, byte y, uint16_t color, uint16_t factor)
 
 void renderFg()
 {
+  {
+    uint16_t fontW = 18;
+    uint16_t fontH = 24;
+    uint16_t x = 100;
+    uint16_t y = 300;
+
+    render.fillRect(x, y, fontW * 5, fontH, ILI9341_BLACK);
+    render.setCursor(x, y);
+    render.setTextColor(ILI9341_WHITE);
+    render.setTextSize(3);
+    render.println(score);
+  }
+
   for (byte x = 0; x < width; ++x)
   {
     for (byte y = 0; y < height; ++y)
@@ -163,7 +176,7 @@ void loop()
     auto w0 = displayWidth / factor;
     auto w1 = displayWidth - w0;
 
-    // echo("::::::");
+    // echo("NEW POINT");
     // echo(p.x);
     // echo(p.y);
     // echo("::::::");
@@ -200,5 +213,5 @@ void loop()
 
   movePlayer();
   renderFg();
-  // delay(100);
+  // delay(200);
 }
