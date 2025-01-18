@@ -60,6 +60,7 @@ void renderFg()
       auto entity = getEntity({x, y});
       uint16_t renderX = toRenderCoord(x);
       uint16_t renderY = toRenderCoord(y);
+
       switch (entity)
       {
       case PLAYER:
@@ -74,13 +75,17 @@ void renderFg()
         // r = distance / 5;
         // render.fillCircle(renderX + distance / 2 - r, renderY + distance / 2 - r, r, ILI9341_YELLOW);
         // break;
-        circle(x, y, ILI9341_GREEN, 5);
+        render.fillRect(renderX, renderY, distance, distance, ILI9341_BLACK);
+        circle(x, y, ILI9341_GREEN, 6);
         break;
       case SUPER_COIN:
         // r = distance / 3;
         // render.fillCircle(renderX + distance / 2, renderY + distance / 2, r, ILI9341_PINK);
         // break;
         circle(x, y, ILI9341_GREEN, 3);
+        break;
+      case GATE:
+        render.fillRect(renderX, renderY, distance - 2, distance - 2, ILI9341_ORANGE);
         break;
       case EMPTY:
         render.fillRect(renderX, renderY, distance, distance, ILI9341_BLACK);
@@ -214,4 +219,5 @@ void loop()
   movePlayer();
   renderFg();
   // delay(200);
+  tick();
 }

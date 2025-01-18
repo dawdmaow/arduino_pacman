@@ -173,6 +173,7 @@ Entity entityFromChar(char c)
 struct Ghost
 {
     Vec pos;
+    Vec dir;
     bool dead;
 };
 
@@ -203,10 +204,10 @@ void resetGame()
     lives = 3;
     playerPos = {14, 23};
     collectedCoins = Grid();
-    ghosts[0] = {{14, 11}, false};
-    ghosts[1] = {{14, 12}, false};
-    ghosts[2] = {{14, 13}, false};
-    ghosts[3] = {{14, 14}, false};
+    ghosts[0] = {{14, 11}, LEFT, false};
+    ghosts[1] = {{14, 12}, LEFT, false};
+    ghosts[2] = {{14, 13}, LEFT, false};
+    ghosts[3] = {{14, 14}, LEFT, false};
     direction = LEFT;
     nextDirection = LEFT;
 }
@@ -348,6 +349,22 @@ void checkGhostCollision()
 
 bool moveGhost(Ghost &ghost, Vec dir)
 {
+    if (dir == LEFT && ghost.dir == RIGHT)
+    {
+        return false;
+    }
+    if (dir == RIGHT && ghost.dir == LEFT)
+    {
+        return false;
+    }
+    if (dir == UP && ghost.dir == DOWN)
+    {
+        return false;
+    }
+    if (dir == DOWN && ghost.dir == UP)
+    {
+        return false;
+    }
     auto newPos = ghost.pos + dir;
     if (!isValidPos(newPos))
     {
@@ -358,6 +375,37 @@ bool moveGhost(Ghost &ghost, Vec dir)
         return false;
     }
     ghost.pos = newPos;
+    ghost.dir = dir;
     checkGhostCollision();
     return true;
+}
+
+void makeGhostsMove()
+{
+    for (byte ghostI = 0; ghostI < 4; ++ghostI)
+    {
+        auto ghost = &ghosts[ghostI];
+        Vec dirs[4] = {LEFT, RIGHT, UP, DOWN};
+
+        for (int i = 3; i > 0; i--)
+        {
+            auto j = random(0, i + 1);
+            auto temp = dirs[i];
+            dirs[i] = dirs[j];
+            dirs[j] = temp;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (moveGhost(*ghost, dirs[i]))
+            {
+                break;
+            }
+        }
+    }
+}
+
+void tick()
+{
+    makeGhostsMove();
 }
