@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "game.h"
 
 constexpr byte CLK = 13;
 constexpr byte DIN = 11;
