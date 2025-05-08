@@ -3,7 +3,7 @@
 
 constexpr byte LED_PIN = 13;
 
-void assertImpl(bool cond, int line)
+void assertImpl(bool cond, int line, int freq)
 {
     if (!cond)
     {
@@ -12,13 +12,13 @@ void assertImpl(bool cond, int line)
         while (true)
         {
             digitalWrite(LED_PIN, HIGH);
-            delay(250);
+            delay(freq);
             digitalWrite(LED_PIN, LOW);
-            delay(250);
+            delay(freq);
         }
     }
 }
 
-#define assert(cond) assertImpl(cond, __LINE__)
+#define assert(cond, freq) assertImpl(cond, __LINE__, freq)
 
 #define echo(x) Serial.println(x);

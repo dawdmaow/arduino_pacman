@@ -50,8 +50,8 @@ struct Vec
 
     int index()
     {
-        assert(x >= 0 && x < width);
-        assert(y >= 0 && y < height);
+        assert(x >= 0 && x < width, 1000);
+        assert(y >= 0 && y < height, 2000);
         return y * width + x;
     }
 
@@ -172,7 +172,7 @@ Entity entityFromChar(char c)
     case '-':
         return GATE;
     }
-    assert(false);
+    assert(false, 3000);
 }
 
 struct Ghost

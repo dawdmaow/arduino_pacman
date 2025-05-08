@@ -38,11 +38,21 @@ void circle(byte x, byte y, uint16_t color, uint16_t factor)
   // yield();
 }
 
+constexpr uint16_t fontW = 18;
+constexpr uint16_t fontH = 24;
+
+void text(int16_t x, int16_t y, char *s)
+{
+  render.fillRect(x, y, fontW * 5, fontH, ILI9341_BLACK);
+  render.setCursor(x, y);
+  render.setTextColor(ILI9341_WHITE);
+  render.setTextSize(3);
+  render.println(s);
+}
+
 void renderFg()
 {
   {
-    uint16_t fontW = 18;
-    uint16_t fontH = 24;
     uint16_t x = 100;
     uint16_t y = 300;
 
@@ -51,6 +61,26 @@ void renderFg()
     render.setTextColor(ILI9341_WHITE);
     render.setTextSize(3);
     render.println(score);
+
+    x = 80;
+    y = 265;
+
+    if (direction == LEFT)
+    {
+      text(x, y, "LEFT");
+    }
+    else if (direction == RIGHT)
+    {
+      text(x, y, "RIGHT");
+    }
+    else if (direction == UP)
+    {
+      text(x, y, "UP");
+    }
+    else if (direction == DOWN)
+    {
+      text(x, y, "DOWN");
+    }
   }
 
   for (byte x = 0; x < width; ++x)
@@ -143,10 +173,10 @@ void setup()
   pinMode(CS, OUTPUT);
   resetGame();
 
-  if (!touch.begin(40))
-  {
-    assert(false);
-  }
+  // if (!touch.begin(40))
+  // {
+  //   assert(false, 4000);
+  // }
 
   render.begin();
 
@@ -181,10 +211,10 @@ void loop()
     auto w0 = displayWidth / factor;
     auto w1 = displayWidth - w0;
 
-    // echo("NEW POINT");
-    // echo(p.x);
-    // echo(p.y);
-    // echo("::::::");
+    echo("POINT:");
+    echo(p.x);
+    echo(p.y);
+    echo(" ");
 
     if (p.y < h0)
     {
