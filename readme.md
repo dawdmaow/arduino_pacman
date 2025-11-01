@@ -6,12 +6,8 @@ This project is a functional Pacman game running on Arduino Uno with an ILI9341 
 
 # Features
 
-- **Classic Pacman Gameplay**: Navigate through a maze, collect coins, and avoid ghosts
 - **Touch Controls**: Use the capacitive touchscreen for directional control
 - **Real-time Graphics**: Rendering using the Adafruit GFX library
-- **Score System**: Track your performance as you collect coins
-- **Ghost AI**: Enemies that chase the player through the maze
-- **Custom Level Layout**: Configurable maze design stored in level files
 
 # Requirements
 
